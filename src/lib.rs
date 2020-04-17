@@ -165,4 +165,16 @@ mod test {
             "KQGJALNNGTESJCXFSWEYLSNCIWYQQYYJBUCOQBTOHLYXVBUPPHMS"
         );
     }
+
+    #[test]
+    fn ring() {
+        // corner case: all three rotors should rotate at first char
+        let enigma = Enigma::new([1, 2, 3], [16, 4, 21], *REFLECTOR, *IDENTITY);
+        assert_eq!(
+            enigma.encrypt(
+                "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+            ),
+            "LNPJGFSFQPRNYKUVTDOOMTZFIHRWFUHVIFWCC"
+        );
+    }
 }
