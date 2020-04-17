@@ -130,12 +130,39 @@ impl Enigma {
             // rotor3
             let index15 = self.rotors[2].mapping.get_rev(index14);
             // offset
-            let index16 = (index15 + 26 -  pos[2]) % 26;
+            let index16 = (index15 + 26 - pos[2]) % 26;
             // wiring board
             let res = self.wiring.get_rev(index16);
             s.push((res + b'A') as char);
         }
 
         s
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn aaaa() {
+        let enigma = Enigma::new([1, 2, 3], [7, 3, 23], *REFLECTOR, *IDENTITY);
+        assert_eq!(
+            enigma.encrypt(
+                "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+            ),
+            "KTWREEOSTUVDOPLLBCOSVXVOLPBZSQKWENMRQHXJWRZDCYDJBZPZBYNRHFODHTINVGBEYBCSZOBTYZ"
+        );
+    }
+
+    #[test]
+    fn alphabet() {
+        let enigma = Enigma::new([1, 2, 3], [7, 3, 23], *REFLECTOR, *IDENTITY);
+        assert_eq!(
+            enigma.encrypt(
+                "ABCDEFGHIJKLMNOPQRSTUVWXYZQWERTYUIOPASDFGHJKLZXCVBNM"
+            ),
+            "KQGJALNNGTESJCXFSWEYLSNCIWYQQYYJBUCOQBTOHLYXVBUPPHMS"
+        );
     }
 }
