@@ -90,16 +90,13 @@ impl Enigma {
         for ch in input.as_bytes() {
             assert!(b'A' <= *ch && *ch <= b'Z');
             // shift position
-            for i in (0..3).rev() {
-                if pos[i] == self.rotors[i].ring {
-                    // prev one need shifting
-                    pos[i] = (pos[i] + 1) % 26;
-                } else {
-                    // enough
-                    pos[i] = (pos[i] + 1) % 26;
-                    break;
-                }
+            if pos[1] == self.rotors[1].ring {
+                pos[0] = (pos[0] + 1) % 26;
             }
+            if pos[1] == self.rotors[1].ring || pos[2] == self.rotors[2].ring {
+                pos[1] = (pos[1] + 1) % 26;
+            }
+            pos[2] = (pos[2] + 1) % 26;
 
             let index = ch - b'A';
             // wiring board
