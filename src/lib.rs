@@ -7,7 +7,7 @@ pub struct Mapping {
 }
 
 impl Mapping {
-    fn new(input: &str) -> Mapping {
+    pub fn new(input: &str) -> Mapping {
         assert_eq!(input.len(), 26);
         let mut res = [0u8; 26];
         let mut rev = [0u8; 26];
@@ -133,6 +133,11 @@ impl Enigma {
 
         s
     }
+
+    pub fn decrypt(&self, input: &str) -> String {
+        // symmetric
+        self.encrypt(input)
+    }
 }
 
 #[cfg(test)]
@@ -147,6 +152,12 @@ mod test {
                 "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
             ),
             "KTWREEOSTUVDOPLLBCOSVXVOLPBZSQKWENMRQHXJWRZDCYDJBZPZBYNRHFODHTINVGBEYBCSZOBTYZ"
+        );
+        assert_eq!(
+            enigma.decrypt(
+                "KTWREEOSTUVDOPLLBCOSVXVOLPBZSQKWENMRQHXJWRZDCYDJBZPZBYNRHFODHTINVGBEYBCSZOBTYZ"
+            ),
+            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
         );
     }
 
@@ -166,6 +177,23 @@ mod test {
         assert_eq!(
             enigma.encrypt("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),
             "LNPJGFSFQPRNYKUVTDOOMTZFIHRWFUHVIFWCC"
+        );
+    }
+
+    #[test]
+    fn wiring() {
+        let enigma = Enigma::new(
+            [1, 2, 3],
+            [7, 3, 23],
+            Mapping::new("GHIJKLABCDEFMNOPQRSTUVWXYZ"),
+        );
+        assert_eq!(
+            enigma.encrypt("AAAAAAAAAAAAAAAAAAA"),
+            "NIIQIENICPPHQLHWJKQ"
+        );
+        assert_eq!(
+            enigma.decrypt("NIIQIENICPPHQLHWJKQ"),
+            "AAAAAAAAAAAAAAAAAAA"
         );
     }
 }
