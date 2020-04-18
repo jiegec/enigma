@@ -106,9 +106,17 @@ fn main() {
         for (rotor, pos) in settings.iter() {
             println!("for setting {:?} {:?}:", rotor, pos);
             let enigma = Enigma::new(*rotor, *pos, *IDENTITY);
+            let mut score = 0;
             for cipher in &known_ciphertext {
-                println!("{} -> {}", cipher, enigma.decrypt(cipher));
+                let dec = enigma.decrypt(cipher);
+                for i in 0..3 {
+                    if dec.as_bytes()[i] == dec.as_bytes()[i+3] {
+                        score += 1;
+                    }
+                }
+                println!("{} -> {}", cipher, dec);
             }
+            println!("score: {}", score);
         }
     }
 }
