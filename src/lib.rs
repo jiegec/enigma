@@ -138,6 +138,67 @@ impl Enigma {
         // symmetric
         self.encrypt(input)
     }
+
+    pub fn encrypt_char(&self, ch: char, offset: usize) -> char {
+        let mut pos = self.positions;
+        assert!('A' <= ch && ch <= 'Z');
+        for _ in 0..offset {
+            // shift position
+            if pos[1] == self.rotors[1].ring {
+                pos[0] = (pos[0] + 1) % 26;
+            }
+            if pos[1] == self.rotors[1].ring || pos[2] == self.rotors[2].ring {
+                pos[1] = (pos[1] + 1) % 26;
+            }
+            pos[2] = (pos[2] + 1) % 26;
+        }
+
+        // shift position
+        if pos[1] == self.rotors[1].ring {
+            pos[0] = (pos[0] + 1) % 26;
+        }
+        if pos[1] == self.rotors[1].ring || pos[2] == self.rotors[2].ring {
+            pos[1] = (pos[1] + 1) % 26;
+        }
+        pos[2] = (pos[2] + 1) % 26;
+
+        let index = ch as u8 - b'A';
+        // wiring board
+        let index1 = self.wiring.get(index);
+        // offset
+        let index2 = (index1 + pos[2]) % 26;
+        // rotor3
+        let index3 = self.rotors[2].mapping.get(index2);
+        // rotor3 -> rotor2
+        let index4 = (index3 + 26 - pos[2] + pos[1]) % 26;
+        // rotor2
+        let index5 = self.rotors[1].mapping.get(index4);
+        // rotor2 -> rotor1
+        let index6 = (index5 + 26 - pos[1] + pos[0]) % 26;
+        // rotor1
+        let index7 = self.rotors[0].mapping.get(index6);
+        // rotor1 -> reflector
+        let index8 = (index7 + 26 - pos[0]) % 26;
+        // reflector
+        let index9 = self.reflector.get(index8);
+        // reflector -> rotor1
+        let index10 = (index9 + pos[0]) % 26;
+        // rotor1
+        let index11 = self.rotors[0].mapping.get_rev(index10);
+        // rotor1 -> rotor2
+        let index12 = (index11 + 26 - pos[0] + pos[1]) % 26;
+        // rotor2
+        let index13 = self.rotors[1].mapping.get_rev(index12);
+        // rotor2 -> rotor3
+        let index14 = (index13 + 26 - pos[1] + pos[2]) % 26;
+        // rotor3
+        let index15 = self.rotors[2].mapping.get_rev(index14);
+        // offset
+        let index16 = (index15 + 26 - pos[2]) % 26;
+        // wiring board
+        let res = self.wiring.get_rev(index16);
+        (res + b'A') as char
+    }
 }
 
 #[cfg(test)]
@@ -187,13 +248,7 @@ mod test {
             [7, 3, 23],
             Mapping::new("GHIJKLABCDEFMNOPQRSTUVWXYZ"),
         );
-        assert_eq!(
-            enigma.encrypt("AAAAAAAAAAAAAAAAAAA"),
-            "NIIQIENICPPHQLHWJKQ"
-        );
-        assert_eq!(
-            enigma.decrypt("NIIQIENICPPHQLHWJKQ"),
-            "AAAAAAAAAAAAAAAAAAA"
-        );
+        assert_eq!(enigma.encrypt("AAAAAAAAAAAAAAAAAAA"), "NIIQIENICPPHQLHWJKQ");
+        assert_eq!(enigma.decrypt("NIIQIENICPPHQLHWJKQ"), "AAAAAAAAAAAAAAAAAAA");
     }
 }

@@ -110,7 +110,7 @@ fn main() {
             for cipher in &known_ciphertext {
                 let dec = enigma.decrypt(cipher);
                 for i in 0..3 {
-                    if dec.as_bytes()[i] == dec.as_bytes()[i+3] {
+                    if dec.as_bytes()[i] == dec.as_bytes()[i + 3] {
                         score += 1;
                     }
                 }
