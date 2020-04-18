@@ -65,12 +65,7 @@ pub struct Enigma {
 }
 
 impl Enigma {
-    pub fn new(
-        rotors: [usize; 3],
-        positions: [u8; 3],
-        reflector: Mapping,
-        wiring: Mapping,
-    ) -> Enigma {
+    pub fn new(rotors: [usize; 3], positions: [u8; 3], wiring: Mapping) -> Enigma {
         let mut r = [*ROTOR_1; 3];
         for i in 0..3 {
             r[i] = ROTORS[rotors[i] - 1];
@@ -79,7 +74,7 @@ impl Enigma {
         Enigma {
             rotors: r,
             positions,
-            reflector,
+            reflector: *REFLECTOR,
             wiring,
         }
     }
@@ -146,7 +141,7 @@ mod test {
 
     #[test]
     fn aaaa() {
-        let enigma = Enigma::new([1, 2, 3], [7, 3, 23], *REFLECTOR, *IDENTITY);
+        let enigma = Enigma::new([1, 2, 3], [7, 3, 23], *IDENTITY);
         assert_eq!(
             enigma.encrypt(
                 "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
@@ -157,11 +152,9 @@ mod test {
 
     #[test]
     fn alphabet() {
-        let enigma = Enigma::new([1, 2, 3], [7, 3, 23], *REFLECTOR, *IDENTITY);
+        let enigma = Enigma::new([1, 2, 3], [7, 3, 23], *IDENTITY);
         assert_eq!(
-            enigma.encrypt(
-                "ABCDEFGHIJKLMNOPQRSTUVWXYZQWERTYUIOPASDFGHJKLZXCVBNM"
-            ),
+            enigma.encrypt("ABCDEFGHIJKLMNOPQRSTUVWXYZQWERTYUIOPASDFGHJKLZXCVBNM"),
             "KQGJALNNGTESJCXFSWEYLSNCIWYQQYYJBUCOQBTOHLYXVBUPPHMS"
         );
     }
@@ -169,11 +162,9 @@ mod test {
     #[test]
     fn ring() {
         // corner case: all three rotors should rotate at first char
-        let enigma = Enigma::new([1, 2, 3], [16, 4, 21], *REFLECTOR, *IDENTITY);
+        let enigma = Enigma::new([1, 2, 3], [16, 4, 21], *IDENTITY);
         assert_eq!(
-            enigma.encrypt(
-                "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-            ),
+            enigma.encrypt("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),
             "LNPJGFSFQPRNYKUVTDOOMTZFIHRWFUHVIFWCC"
         );
     }
