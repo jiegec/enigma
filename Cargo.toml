@@ -8,5 +8,5 @@ edition = "2018"
 
 [dependencies]
 lazy_static = "1.4"
-multimap = "0.8"
-petgraph = "0.5"
+multimap = "0.10"
+petgraph = "0.8"
